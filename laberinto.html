@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego de Laberinto</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .laberinto {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-template-rows: repeat(10, 40px);
+      gap: 2px;
+      background: #00ffab;
+      padding: 10px;
+      box-shadow: 0 0 20px #0f0;
+    }
+    .celda {
+      width: 40px;
+      height: 40px;
+      background: #1a1a1a;
+    }
+    .pared {
+      background: #00ffab;
+    }
+    .jugador {
+      background: deeppink;
+      border-radius: 50%;
+    }
+    .meta {
+      background: gold;
+      border-radius: 10%;
+    }
+  </style>
+</head>
+<body>
+  <div class="laberinto" id="laberinto"></div>
+
+  <script>
+    const mapa = [
+      "##########",
+      "#P.......#",
+      "#.######.#",
+      "#.#....#.#",
+      "#.#.##.#.#",
+      "#...##...#",
+      "###.######",
+      "#........#",
+      "#.######.#",
+      "#.......E#"
+    ];
+
+    const laberinto = document.getElementById("laberinto");
+    const celdas = [];
+
+    let jugador = { x: 1, y: 1 };
+
+    function dibujar() {
+      laberinto.innerHTML = "";
+      for (let y = 0; y < 10; y++) {
+        for (let x = 0; x < 10; x++) {
+          const celda = document.createElement("div");
+          celda.classList.add("celda");
+          if (mapa[y][x] === "#") celda.classList.add("pared");
+          if (x === jugador.x && y === jugador.y) celda.classList.add("jugador");
+          if (mapa[y][x] === "E") celda.classList.add("meta");
+          laberinto.appendChild(celda);
+        }
+      }
+    }
+
+    function mover(dx, dy) {
+      const nuevaX = jugador.x + dx;
+      const nuevaY = jugador.y + dy;
+      if (mapa[nuevaY][nuevaX] !== "#") {
+        jugador.x = nuevaX;
+        jugador.y = nuevaY;
+        dibujar();
+        if (mapa[nuevaY][nuevaX] === "E") {
+          setTimeout(() => alert("¡Has llegado a la meta!"), 100);
+        }
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+      switch (e.key) {
+        case "ArrowUp": mover(0, -1); break;
+        case "ArrowDown": mover(0, 1); break;
+        case "ArrowLeft": mover(-1, 0); break;
+        case "ArrowRight": mover(1, 0); break;
+      }
+    });
+
+    dibujar();
+  </script>
+</body>
+</html>
