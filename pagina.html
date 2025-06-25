@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refreshing Brands - Experiencia Interactiva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --coke-red: #F40009;
+            --pepsi-blue: #004B93;
+            --fanta-orange: #FF5C00;
+            --transition-time: 1.5s;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+            scroll-behavior: smooth;
+        }
+        
+        .brand-section {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-time) cubic-bezier(0.65, 0, 0.35, 1);
+            padding-bottom: 200px;
+        }
+        
+        /* Burbujas encima del contenido */
+        .bubble-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+        
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            backdrop-filter: blur(2px);
+            pointer-events: none;
+            z-index: 100;
+            animation: float linear infinite;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-20vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        /* Efecto de transición con burbujas */
+        .bubble-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+        
+        .bubble-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .transition-bubble {
+            width: 20%;
+            height: 20%;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .bubble-transition.active .transition-bubble {
+            transform: scale(1.5);
+        }
+        
+        /* Efectos de texto avanzados */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        
+        .text-stroke {
+            -webkit-text-stroke: 2px white;
+            color: transparent;
+        }
+        
+        .text-3d {
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.2), 
+                         6px 6px 0 rgba(0,0,0,0.1);
+        }
+        
+        .text-wave {
+            display: inline-block;
+            animation: wave 3s ease-in-out infinite;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(2deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-5px) rotate(-2deg); }
+        }
+        
+        .text-drip {
+            position: relative;
+        }
+        
+        .text-drip::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 20px;
+            background: currentColor;
+            border-radius: 0 0 10px 10px;
+            animation: drip 2s infinite;
+        }
+        
+        @keyframes drip {
+            0%, 30% { height: 0; opacity: 0; }
+            50% { opacity: 1; }
+            100% { height: 20px; opacity: 0; }
+        }
+        
+        /* Efecto de botella ascendente */
+        .bottle-ascend {
+            position: relative;
+            transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transform: translateY(0);
+        }
+        
+        .bottle-ascend.ascending {
+            transform: translateY(-100vh) rotate(15deg);
+        }
+        
+        /* Secciones extendidas */
+        .extended-section {
+            min-height: 120vh;
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: currentColor;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 10px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: white;
+            border: 4px solid currentColor;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .left {
+            left: 0;
+        }
+        
+        .right {
+            left: 50%;
+        }
+        
+        .left::after {
+            right: -12px;
+        }
+        
+        .right::after {
+            left: -12px;
+        }
+        
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: white;
+            position: relative;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+        
+        /* Product showcase */
+        .product-card {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 30px 50px rgba(0,0,0,0.2);
+        }
+        
+        /* Botones y navegación */
+        .nav-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            border: 2px solid white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-dot.active {
+            background: white;
+            transform: scale(1.4);
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+        
+        .travel-btn {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .travel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .travel-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: all 0.7s ease;
+        }
+        
+        .travel-btn:hover::before {
+            left: 100%;
+        }
+        
+        /* Scroll hint */
+        .scroll-hint {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+        
+        /* Efecto de brillo */
+        .shine {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { left: -60%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Efecto de scroll personalizado */
+        .scroll-container {
+            scroll-snap-type: y mandatory;
+            height: 100vh;
+            overflow-y: scroll;
+        }
+        
+        .scroll-section {
+            scroll-snap-align: start;
+            height: 100vh;
+            position: relative;
+        }
+        
+        /* Efecto de botella flotante */
+        .floating-bottle {
+            animation: floatBottle 6s ease-in-out infinite;
+        }
+        
+        @keyframes floatBottle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+        
+        /* Efecto de cambio de sección */
+        .section-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        
+        .section-transition.active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="relative">
+    <!-- Contenedor de burbujas flotantes -->
+    <div class="bubble-container" id="bubbleContainer"></div>
+    
+    <!-- Transición con burbujas -->
+    <div class="bubble-transition" id="bubbleTransition"></div>
+    
+    <!-- Efecto de transición entre secciones -->
+    <div class="section-transition" id="sectionTransition"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-white bg-opacity-90 shadow-md z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-8">
+                <img src="https://logo.clearbit.com/coca-cola.com" alt="Coca-Cola" class="h-10 brand-logo shine">
+                <img src="https://logo.clearbit.com/pepsi.com" alt="Pepsi" class="h-10 brand-logo shine">
+                <img src="https://www.pngkey.com/png/detail/69-691149_logo-fanta-2016-fanta-new-logo-vector.png" alt="Fanta" class="h-10 brand-logo shine">
+
+            </div>
+            <button id="changeAdBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-full transition-all duration-300 shadow-lg travel-btn">
+                <i class="fas fa-random mr-2"></i> Cambiar Marca
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Navigation Dots -->
+    <div class="fixed right-8 top-1/2 transform -translate-y-1/2 z-40 flex flex-col gap-4" id="navDots">
+        <div class="nav-dot active" data-target="coca-cola"></div>
+        <div class="nav-dot" data-target="pepsi"></div>
+        <div class="nav-dot" data-target="fanta"></div>
+    </div>
+    
+    <!-- Scroll Hint -->
+    <div class="fixed bottom-8 left-1/2 transform -translate-x-1/2 text-gray-600 z-40 flex flex-col items-center scroll-hint">
+        <span class="mb-2 text-white drop-shadow-md">Desplázate para descubrir</span>
+        <i class="fas fa-chevron-down text-2xl text-white drop-shadow-md"></i>
+    </div>
+
+    <!-- Brand Sections -->
+    <main id="mainContainer">
+        <!-- Coca-Cola Section -->
+        <section id="coca-cola" class="brand-section bg-gradient-to-b from-red-50 to-red-100 pt-24">
+            <!-- Hero Section -->
+            <div class="container mx-auto px-4 py-16">
+                <div class="flex flex-col md:flex-row items-center justify-between min-h-[80vh]">
+                    <div class="md:w-1/2 mb-12 md:mb-0">
+                        <h1 class="text-6xl md:text-8xl font-bold text-gradient bg-gradient-to-r from-red-600 to-red-800 mb-6 animate__animated animate__fadeInDown">
+                            <span class="text-wave">Taste</span> <span class="text-drip">the</span> <span class="text-3d">Mejora Tu Vida</span>
+                        </h1>
+                        <p class="text-2xl text-gray-700 mb-8 animate__animated animate__fadeIn animate__delay-1s">
+                            Coca-Cola te brinda el sabor refrescante que ilumina tus momentos especiales. 
+                            <span class="font-bold text-red-600">Disfruta de la auténtica felicidad en cada sorbo.</span>
+                        </p>
+                        <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg animate__animated animate__fadeInUp animate__delay-1s">
+                            <i class="fas fa-arrow-right mr-2"></i> Descubre más
+                        </button>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="imagenes/cocacola2.png" 
+                             alt="Coca-Cola Bottle" 
+                             class="max-h-[80vh] floating-bottle animate__animated animate__zoomIn animate__delay-1s"
+                             id="cokeBottle">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- History Timeline -->
+            <div class="extended-section bg-white py-24">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-5xl font-bold text-center text-red-600 mb-20 animate__animated animate__fadeIn">
+                        <span class="text-stroke">Nuestra Historia</span>
+                    </h2>
+                    
+                    <div class="timeline text-red-600">
+                        <div class="timeline-item left animate__animated animate__fadeInLeft">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1886 - Nacimiento de una leyenda</h3>
+                                <p>El farmacéutico Dr. John S. Pemberton crea la fórmula secreta en Atlanta, Georgia.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item right animate__animated animate__fadeInRight animate__delay-1s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1894 - Primera botella</h3>
+                                <p>Joseph Biedenharn instala la primera máquina embotelladora en Mississippi.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item left animate__animated animate__fadeInLeft animate__delay-2s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1915 - Botella Contour</h3>
+                                <p>Se introduce la icónica botella contour, reconocible incluso en la oscuridad.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item right animate__animated animate__fadeInRight animate__delay-3s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1929 - Primera lata</h3>
+                                <p>Se lanza Coca-Cola en lata, revolucionando el consumo de bebidas.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item left animate__animated animate__fadeInLeft animate__delay-4s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1985 - New Coke</h3>
+                                <p>Breve introducción de New Coke, seguida del rápido regreso de la fórmula clásica.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Showcase -->
+            <div class="extended-section bg-gradient-to-b from-white to-red-50 py-24">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-5xl font-bold text-center text-red-600 mb-20 animate__animated animate__fadeIn">
+                        <span class="text-gradient bg-gradient-to-r from-red-600 to-red-800">Nuestra Familia</span>
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-12">
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn">
+                            <img src="imagenes/zero.png" 
+                                 alt="Coca-Cola Zero" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Coca-Cola Zero</h3>
+                            <p class="text-gray-600 text-center">Todo el sabor, cero azúcar. Perfecta para quienes cuidan su consumo calórico.</p>
+                        </div>
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn animate__delay-1s">
+                            <img src="imagenes/cherry.png" 
+                                 alt="Coca-Cola Cherry" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Coca-Cola Cherry</h3>
+                            <p class="text-gray-600 text-center">El clásico sabor de Coca-Cola con un toque de cereza. Una experiencia única.</p>
+                        </div>
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn animate__delay-2s">
+                            <img src="imagenes/vainilla.png" 
+                                 alt="Coca-Cola Vanilla" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Coca-Cola Vanilla</h3>
+                            <p class="text-gray-600 text-center">La suavidad de la vaina de vainilla combinada con el sabor refrescante de Coca-Cola.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Campaign Section -->
+            <div class="extended-section relative overflow-hidden py-24">
+                <div class="parallax-bg" style="background-image: url('https://www.coca-colacompany.com/content/dam/journey/us/en/brands/coca-cola/Coca-Cola-Share-A-Coke-Campaign.jpg');"></div>
+                <div class="container mx-auto px-4 relative">
+                    <div class="max-w-3xl mx-auto text-center">
+                        <h2 class="text-5xl font-bold text-red-600 mb-8 animate__animated animate__fadeIn">
+                            <span class="text-stroke">Comparte una Coca-Cola</span>
+                        </h2>
+                        <p class="text-2xl text-gray-700 mb-8 animate__animated animate__fadeIn animate__delay-1s">
+                            La campaña que personalizó millones de botellas con nombres, convirtiendo cada Coca-Cola en un regalo especial.
+                        </p>
+                        <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg animate__animated animate__fadeInUp animate__delay-2s">
+                            <i class="fas fa-gift mr-2"></i> Personaliza tu botella
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sustainability -->
+            <div class="extended-section bg-white py-24">
+                <div class="container mx-auto px-4">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 mb-12 md:mb-0 animate__animated animate__fadeInLeft">
+                            <img src="imagenes/mundo.png" 
+                                 alt="Sustainable Packaging" 
+                                 class="rounded-3xl shadow-2xl">
+                        </div>
+                        <div class="md:w-1/2 md:pl-16 animate__animated animate__fadeInRight">
+                            <h2 class="text-5xl font-bold text-red-600 mb-8">
+                                <span class="text-gradient bg-gradient-to-r from-green-600 to-blue-600">Compromiso con el Planeta</span>
+                            </h2>
+                            <p class="text-xl text-gray-700 mb-6">
+                                En Coca-Cola nos preocupamos por el medio ambiente. Nuestro objetivo es recolectar y reciclar el equivalente al 100% de nuestros envases para 2030.
+                            </p>
+                            <ul class="space-y-4 mb-8">
+                                <li class="flex items-start">
+                                    <i class="fas fa-recycle text-red-600 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Botellas hechas con 50% de material reciclado</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-leaf text-red-600 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Reducción de huella de carbono en un 25%</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-tint text-red-600 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Programas de conservación de agua en comunidades</span>
+                                </li>
+                            </ul>
+                            <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg">
+                                <i class="fas fa-globe-americas mr-2"></i> Conoce más
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Pepsi Section -->
+        <section id="pepsi" class="brand-section bg-gradient-to-b from-blue-50 to-blue-100 pt-24 hidden">
+            <!-- Hero Section -->
+            <div class="container mx-auto px-4 py-16">
+                <div class="flex flex-col md:flex-row items-center justify-between min-h-[80vh]">
+                    <div class="md:w-1/2 mb-12 md:mb-0">
+                        <h1 class="text-6xl md:text-8xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-blue-900 mb-6 animate__animated animate__fadeInDown">
+                            <span class="text-wave">That's</span> <span class="text-drip">What</span> <span class="text-3d">I Like</span>
+                        </h1>
+                        <p class="text-2xl text-gray-700 mb-8 animate__animated animate__fadeIn animate__delay-1s">
+                            Pepsi trae el sabor audaz que desafía lo ordinario. 
+                            <span class="font-bold text-blue-600">Para aquellos que viven la vida al máximo.</span>
+                        </p>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg animate__animated animate__fadeInUp animate__delay-1s">
+                            <i class="fas fa-bolt mr-2"></i> Únete al desafío
+                        </button>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="imagenes/pepsi3.png" 
+                             alt="Pepsi Can" 
+                             class="max-h-[80vh] floating-bottle animate__animated animate__zoomIn animate__delay-1s"
+                             id="pepsiCan">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- History Timeline -->
+            <div class="extended-section bg-white py-24">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-5xl font-bold text-center text-blue-600 mb-20 animate__animated animate__fadeIn">
+                        <span class="text-stroke">Nuestra Historia</span>
+                    </h2>
+                    
+                    <div class="timeline text-blue-600">
+                        <div class="timeline-item left animate__animated animate__fadeInLeft">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1893 - Nacimiento de Pepsi</h3>
+                                <p>Creada por Caleb Bradham como "Brad's Drink" en su farmacia de Carolina del Norte.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item right animate__animated animate__fadeInRight animate__delay-1s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1898 - Cambio de nombre</h3>
+                                <p>Rebautizada como Pepsi-Cola, derivado de la enzima digestiva pepsina.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item left animate__animated animate__fadeInLeft animate__delay-2s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1934 - Botella de 12 onzas</h3>
+                                <p>Introducción de la botella de 12 onzas por 5 centavos durante la Gran Depresión.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item right animate__animated animate__fadeInRight animate__delay-3s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1964 - Diet Pepsi</h3>
+                                <p>Lanzamiento de Diet Pepsi, la primera bebida dietética de cola de la compañía.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item left animate__animated animate__fadeInLeft animate__delay-4s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1984 - Pepsi Challenge</h3>
+                                <p>Campaña de marketing que comparaba directamente el sabor de Pepsi vs Coca-Cola.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Showcase -->
+            <div class="extended-section bg-gradient-to-b from-white to-blue-50 py-24">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-5xl font-bold text-center text-blue-600 mb-20 animate__animated animate__fadeIn">
+                        <span class="text-gradient bg-gradient-to-r from-blue-600 to-blue-900">Nuestra Familia</span>
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-12">
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn">
+                            <img src="imagenes/pzero.png" 
+                                 alt="Pepsi Zero Sugar" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Pepsi Zero Sugar</h3>
+                            <p class="text-gray-600 text-center">Todo el sabor de Pepsi sin azúcar ni calorías. Para los que buscan lo mejor de ambos mundos.</p>
+                        </div>
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn animate__delay-1s">
+                            <img src="imagenes/mango.jpg" 
+                                 alt="Pepsi Mango" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Pepsi Mango</h3>
+                            <p class="text-gray-600 text-center">El sabor audaz de Pepsi combinado con la dulzura tropical del mango.</p>
+                        </div>
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn animate__delay-2s">
+                            <img src="imagenes/pcherry.png" 
+                                 alt="Pepsi Cherry" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Pepsi Cherry</h3>
+                            <p class="text-gray-600 text-center">El clásico sabor de Pepsi con un toque de cereza. Una combinación perfecta.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Music Campaign -->
+            <div class="extended-section relative overflow-hidden py-24">
+                <div class="parallax-bg" style="background-image: url('https://www.pepsi.com/en-us/uploads/images/pepsi-music-campaign.jpg');"></div>
+                <div class="container mx-auto px-4 relative">
+                    <div class="max-w-3xl mx-auto text-center">
+                        <h2 class="text-5xl font-bold text-blue-600 mb-8 animate__animated animate__fadeIn">
+                            <span class="text-stroke">Pepsi & Música</span>
+                        </h2>
+                        <p class="text-2xl text-gray-700 mb-8 animate__animated animate__fadeIn animate__delay-1s">
+                            Durante décadas, Pepsi ha estado vinculada a los mayores iconos de la música, desde Michael Jackson hasta Beyoncé.
+                        </p>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg animate__animated animate__fadeInUp animate__delay-2s">
+                            <i class="fas fa-music mr-2"></i> Descubre las colaboraciones
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sports Sponsorship -->
+            <div class="extended-section bg-white py-24">
+                <div class="container mx-auto px-4">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 mb-12 md:mb-0 animate__animated animate__fadeInLeft">
+                            <img src="https://www.pepsi.com/en-us/uploads/images/pepsi-super-bowl.jpg" 
+                                 alt="Pepsi Super Bowl" 
+                                 class="rounded-3xl shadow-2xl">
+                        </div>
+                        <div class="md:w-1/2 md:pl-16 animate__animated animate__fadeInRight">
+                            <h2 class="text-5xl font-bold text-blue-600 mb-8">
+                                <span class="text-gradient bg-gradient-to-r from-blue-600 to-red-600">Pepsi y el Deporte</span>
+                            </h2>
+                            <p class="text-xl text-gray-700 mb-6">
+                                Pepsi ha sido patrocinador oficial de la NFL, la NBA y grandes eventos deportivos como el Super Bowl, llevando la emoción del deporte a sus campañas.
+                            </p>
+                            <ul class="space-y-4 mb-8">
+                                <li class="flex items-start">
+                                    <i class="fas fa-football-ball text-blue-600 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Patrocinador oficial de la NFL desde 2002</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-basketball-ball text-blue-600 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Colaboraciones con estrellas de la NBA</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-trophy text-blue-600 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Anuncios legendarios del Super Bowl</span>
+                                </li>
+                            </ul>
+                            <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg">
+                                <i class="fas fa-trophy mr-2"></i> Ver campañas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Fanta Section -->
+        <section id="fanta" class="brand-section bg-gradient-to-b from-orange-50 to-orange-100 pt-24 hidden">
+            <!-- Hero Section -->
+            <div class="container mx-auto px-4 py-16">
+                <div class="flex flex-col md:flex-row items-center justify-between min-h-[80vh]">
+                    <div class="md:w-1/2 mb-12 md:mb-0">
+                        <h1 class="text-6xl md:text-8xl font-bold text-gradient bg-gradient-to-r from-orange-500 to-yellow-500 mb-6 animate__animated animate__fadeInDown">
+                            <span class="text-wave">Play</span> <span class="text-drip">with</span> <span class="text-3d">Fanta</span>
+                        </h1>
+                        <p class="text-2xl text-gray-700 mb-8 animate__animated animate__fadeIn animate__delay-1s">
+                            Explota de sabor con Fanta, la bebida frutal que llena de color tu día. 
+                            <span class="font-bold text-orange-500">¡Déjate llevar por la diversión!</span>
+                        </p>
+                        <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg animate__animated animate__fadeInUp animate__delay-1s">
+                            <i class="fas fa-gamepad mr-2"></i> Juega ahora
+                        </button>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="imagenes/fanta2.png" 
+                             alt="Fanta Bottle" 
+                             class="max-h-[80vh] floating-bottle animate__animated animate__zoomIn animate__delay-1s"
+                             id="fantaBottle">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- History Timeline -->
+            <div class="extended-section bg-white py-24">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-5xl font-bold text-center text-orange-500 mb-20 animate__animated animate__fadeIn">
+                        <span class="text-stroke">Nuestra Historia</span>
+                    </h2>
+                    
+                    <div class="timeline text-orange-500">
+                        <div class="timeline-item left animate__animated animate__fadeInLeft">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1940 - Nacimiento en Alemania</h3>
+                                <p>Creada durante la Segunda Guerra Mundial cuando faltaban ingredientes para Coca-Cola.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item right animate__animated animate__fadeInRight animate__delay-1s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1955 - Lanzamiento en EE.UU.</h3>
+                                <p>Introducida en Estados Unidos como bebida de naranja, expandiéndose rápidamente.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item left animate__animated animate__fadeInLeft animate__delay-2s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1960 - Sabores internacionales</h3>
+                                <p>Introducción de nuevos sabores adaptados a mercados locales alrededor del mundo.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item right animate__animated animate__fadeInRight animate__delay-3s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">1980 - Campañas de color</h3>
+                                <p>Fanta se posiciona como la bebida divertida y colorida para jóvenes.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item left animate__animated animate__fadeInLeft animate__delay-4s">
+                            <div class="timeline-content">
+                                <h3 class="font-bold text-xl mb-2">2001 - Relanzamiento global</h3>
+                                <p>Nueva imagen y fórmula mejorada para consolidarse como líder en refrescos frutales.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Showcase -->
+            <div class="extended-section bg-gradient-to-b from-white to-orange-50 py-24">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-5xl font-bold text-center text-orange-500 mb-20 animate__animated animate__fadeIn">
+                        <span class="text-gradient bg-gradient-to-r from-orange-500 to-yellow-500">Sabores del Mundo</span>
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-12">
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn">
+                            <img src="imagenes/fresa.png" 
+                                 alt="Fanta Fresa" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Fanta Fresa</h3>
+                            <p class="text-gray-600 text-center">El dulce sabor de la fresa madura en una refrescante bebida burbujeante.</p>
+                        </div>
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn animate__delay-1s">
+                            <img src="imagenes/uva.png" 
+                                 alt="Fanta Uva" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Fanta Uva</h3>
+                            <p class="text-gray-600 text-center">El intenso sabor de la uva morada que refresca como ninguna otra.</p>
+                        </div>
+                        <div class="product-card bg-white rounded-3xl p-8 shadow-xl animate__animated animate__zoomIn animate__delay-2s">
+                            <img src="imagenes/piña.png" 
+                                 alt="Fanta Piña" 
+                                 class="h-64 mx-auto mb-6">
+                            <h3 class="text-2xl font-bold text-center mb-2">Fanta Piña</h3>
+                            <p class="text-gray-600 text-center">El sabor tropical de la piña que te transporta a una isla paradisíaca.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fun Campaign -->
+            <div class="extended-section relative overflow-hidden py-24">
+                <div class="parallax-bg" style="background-image: url('https://www.fanta.com/content/dam/nagbrands/us/fanta/en/fanta-fun-campaign.jpg');"></div>
+                <div class="container mx-auto px-4 relative">
+                    <div class="max-w-3xl mx-auto text-center">
+                        <h2 class="text-5xl font-bold text-orange-500 mb-8 animate__animated animate__fadeIn">
+                            <span class="text-stroke">#FantasticFun</span>
+                        </h2>
+                        <p class="text-2xl text-gray-700 mb-8 animate__animated animate__fadeIn animate__delay-1s">
+                            Fanta celebra la diversión, el color y la creatividad en todas sus formas. Únete al movimiento.
+                        </p>
+                        <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg animate__animated animate__fadeInUp animate__delay-2s">
+                            <i class="fas fa-hashtag mr-2"></i> Ver la campaña
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Global Flavors -->
+            <div class="extended-section bg-white py-24">
+                <div class="container mx-auto px-4">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 mb-12 md:mb-0 animate__animated animate__fadeInLeft">
+                            <img src="imagenes/explosion.png" 
+                                 alt="Fanta Global Flavors" 
+                                 class="rounded-3xl shadow-2xl">
+                        </div>
+                        <div class="md:w-1/2 md:pl-16 animate__animated animate__fadeInRight">
+                            <h2 class="text-5xl font-bold text-orange-500 mb-8">
+                                <span class="text-gradient bg-gradient-to-r from-orange-500 to-purple-500">Sabores Globales</span>
+                            </h2>
+                            <p class="text-xl text-gray-700 mb-6">
+                                Fanta ofrece más de 90 sabores en todo el mundo, adaptándose a los gustos locales y creando experiencias únicas en cada país.
+                            </p>
+                            <ul class="space-y-4 mb-8">
+                                <li class="flex items-start">
+                                    <i class="fas fa-globe-americas text-orange-500 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Fanta Shokata (saúco y flor de tilo) en Europa del Este</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-globe-asia text-orange-500 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Fanta Melon Creamy en Asia</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-globe-africa text-orange-500 text-xl mr-3 mt-1"></i>
+                                    <span class="text-gray-700">Fanta Pineapple & Nut en África</span>
+                                </li>
+                            </ul>
+                            <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg">
+                                <i class="fas fa-flag mr-2"></i> Explora sabores
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <p>© 2025 Refreshing Brands. Todos los derechos reservados.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-gray-300 transition"><i class="fas fa-file-contract mr-1"></i> Términos</a>
+                    <a href="#" class="hover:text-gray-300 transition"><i class="fas fa-lock mr-1"></i> Privacidad</a>
+                    <a href="#" class="hover:text-gray-300 transition"><i class="fas fa-envelope mr-1"></i> Contacto</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Brand switching functionality
+        const brands = ['coca-cola', 'pepsi', 'fanta'];
+        const brandColors = {
+            'coca-cola': '#F40009',
+            'pepsi': '#004B93',
+            'fanta': '#FF5C00'
+        };
+        let currentBrandIndex = 0;
+        let isTransitioning = false;
+        
+        // Initialize navigation dots
+        const navDots = document.querySelectorAll('.nav-dot');
+        const bubbleContainer = document.getElementById('bubbleContainer');
+        const bubbleTransition = document.getElementById('bubbleTransition');
+        const sectionTransition = document.getElementById('sectionTransition');
+        const mainContainer = document.getElementById('mainContainer');
+        
+        // Create transition bubbles
+        function createTransitionBubbles(color) {
+            bubbleTransition.innerHTML = '';
+            bubbleTransition.style.backgroundColor = color;
+            
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('transition-bubble');
+                bubble.style.backgroundColor = color;
+                bubble.style.opacity = '0.7';
+                bubble.style.transitionDelay = `${i * 0.05}s`;
+                bubbleTransition.appendChild(bubble);
+            }
+        }
+        
+        // Change brand with button
+        document.getElementById('changeAdBtn').addEventListener('click', () => {
+            const nextIndex = (currentBrandIndex + 1) % brands.length;
+            switchBrand(nextIndex);
+        });
+        
+        // Change brand with dots
+        navDots.forEach(dot => {
+            dot.addEventListener('click', function() {
+                if (isTransitioning) return;
+                const target = this.getAttribute('data-target');
+                const targetIndex = brands.indexOf(target);
+                switchBrand(targetIndex);
+            });
+        });
+        
+        function switchBrand(newIndex) {
+            if (isTransitioning || newIndex === currentBrandIndex) return;
+            
+            isTransitioning = true;
+            const currentBrand = brands[currentBrandIndex];
+            const nextBrand = brands[newIndex];
+            
+            // Get current bottle element
+            const currentBottle = document.getElementById(`${currentBrand}Bottle`) || 
+                                 document.getElementById(`${currentBrand}Can`);
+            
+            // Create transition bubbles with new brand color
+            createTransitionBubbles(brandColors[nextBrand]);
+            
+            // Show bubble transition
+            bubbleTransition.classList.add('active');
+            
+            // Animate current bottle to ascend
+            if (currentBottle) {
+                currentBottle.classList.add('bottle-ascend', 'ascending');
+            }
+            
+            setTimeout(() => {
+                // Hide current brand
+                document.getElementById(currentBrand).classList.add('hidden');
+                
+                // Update nav dots
+                navDots[currentBrandIndex].classList.remove('active');
+                
+                // Show new brand
+                document.getElementById(nextBrand).classList.remove('hidden');
+                currentBrandIndex = newIndex;
+                
+                // Update nav dots
+                navDots[currentBrandIndex].classList.add('active');
+                
+                // Scroll to top
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
+                // Create bubbles for new brand
+                createBubbles(brandColors[nextBrand]);
+                
+                // Reset bottle position for next time
+                if (currentBottle) {
+                    currentBottle.classList.remove('ascending');
+                    setTimeout(() => {
+                        currentBottle.classList.remove('bottle-ascend');
+                    }, 1000);
+                }
+                
+                // Hide transition overlay
+                setTimeout(() => {
+                    bubbleTransition.classList.remove('active');
+                    isTransitioning = false;
+                }, 500);
+            }, 800);
+        }
+        
+        // Create bubbles effect
+        function createBubbles(color) {
+            // Remove existing bubbles
+            bubbleContainer.innerHTML = '';
+            
+            // Create new bubbles
+            for (let i = 0; i < 30; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // Random size between 5px and 40px
+                const size = Math.random() * 35 + 5;
+                
+                // Random position
+                const left = Math.random() * 100;
+                
+                // Random animation duration between 8s and 20s
+                const duration = Math.random() * 12 + 8;
+                
+                // Random delay between 0s and 5s
+                const delay = Math.random() * 5;
+                
+                // Random opacity
+                const opacity = Math.random() * 0.5 + 0.3;
+                
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${left}%`;
+                bubble.style.animationDuration = `${duration}s`;
+                bubble.style.animationDelay = `${delay}s`;
+                bubble.style.backgroundColor = color;
+                bubble.style.opacity = opacity;
+                
+                bubbleContainer.appendChild(bubble);
+            }
+        }
+        
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Add appropriate animation class based on existing classes
+                    if (entry.target.classList.contains('text-pop')) {
+                        entry.target.classList.add('animate__animated', 'animate__zoomIn');
+                    } else if (entry.target.classList.contains('text-fade')) {
+                        entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                    } else if (entry.target.classList.contains('text-slide-left')) {
+                        entry.target.classList.add('animate__animated', 'animate__slideInLeft');
+                    } else if (entry.target.classList.contains('text-slide-right')) {
+                        entry.target.classList.add('animate__animated', 'animate__slideInRight');
+                    } else if (entry.target.classList.contains('img-pop')) {
+                        entry.target.classList.add('animate__animated', 'animate__zoomIn');
+                    } else if (entry.target.classList.contains('img-spin')) {
+                        entry.target.classList.add('animate__animated', 'animate__rotateIn');
+                    }
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all elements with animation classes
+        document.querySelectorAll('.text-pop, .text-fade, .text-slide-left, .text-slide-right, .img-pop, .img-spin').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Initialize bubbles for first brand
+        createBubbles(brandColors[brands[currentBrandIndex]]);
+        
+        // Hide scroll hint after some time
+        setTimeout(() => {
+            document.querySelector('.scroll-hint').style.opacity = '0';
+            setTimeout(() => {
+                document.querySelector('.scroll-hint').style.display = 'none';
+            }, 500);
+        }, 5000);
+        
+        // Scroll effect between sections
+        let lastScrollPosition = 0;
+        let isScrolling = false;
+        
+        window.addEventListener('wheel', (e) => {
+            if (isTransitioning || isScrolling) return;
+            
+            const currentSection = document.querySelector(`#${brands[currentBrandIndex]}`);
+            const scrollPosition = window.scrollY;
+            const scrollHeight = currentSection.scrollHeight;
+            const windowHeight = window.innerHeight;
+            
+            // Check if we're at the bottom of the current section
+            if (e.deltaY > 0 && scrollPosition + windowHeight >= scrollHeight - 200) {
+                // Scroll down to next brand
+                const nextIndex = (currentBrandIndex + 1) % brands.length;
+                switchBrandWithScroll(nextIndex);
+                return;
+            }
+            
+            // Check if we're at the top of the current section
+            if (e.deltaY < 0 && scrollPosition <= 0) {
+                // Scroll up to previous brand
+                const prevIndex = (currentBrandIndex - 1 + brands.length) % brands.length;
+                switchBrandWithScroll(prevIndex);
+                return;
+            }
+            
+            lastScrollPosition = scrollPosition;
+        }, { passive: false });
+        
+        function switchBrandWithScroll(newIndex) {
+            if (isTransitioning || newIndex === currentBrandIndex) return;
+            
+            isScrolling = true;
+            sectionTransition.style.backgroundColor = brandColors[brands[newIndex]];
+            sectionTransition.classList.add('active');
+            
+            setTimeout(() => {
+                switchBrand(newIndex);
+                
+                setTimeout(() => {
+                    sectionTransition.classList.remove('active');
+                    isScrolling = false;
+                }, 1000);
+            }, 300);
+        }
+        
+        // Touch events for mobile
+        let touchStartY = 0;
+        let touchEndY = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+        
+        document.addEventListener('touchend', (e) => {
+            if (isTransitioning || isScrolling) return;
+            
+            touchEndY = e.changedTouches[0].screenY;
+            const currentSection = document.querySelector(`#${brands[currentBrandIndex]}`);
+            const scrollPosition = window.scrollY;
+            const scrollHeight = currentSection.scrollHeight;
+            const windowHeight = window.innerHeight;
+            
+            // Swipe down (scroll up)
+            if (touchEndY > touchStartY && scrollPosition <= 0) {
+                const prevIndex = (currentBrandIndex - 1 + brands.length) % brands.length;
+                switchBrandWithScroll(prevIndex);
+            }
+            
+            // Swipe up (scroll down)
+            if (touchEndY < touchStartY && scrollPosition + windowHeight >= scrollHeight - 200) {
+                const nextIndex = (currentBrandIndex + 1) % brands.length;
+                switchBrandWithScroll(nextIndex);
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
