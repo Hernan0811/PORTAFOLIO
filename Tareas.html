@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskQuest - Gestión de Tareas</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: #fff;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .task-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .task {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 15px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .task:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    .task-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .task small {
+      display: block;
+      color: #ccc;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+    }
+    .task-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .task-buttons button {
+      background: #444;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .task-buttons button:hover {
+      background: #28a745;
+    }
+    .task-buttons .delete:hover {
+      background: #dc3545;
+    }
+    #form-container {
+      display: none;
+      margin-bottom: 20px;
+      animation: fadeIn 0.5s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    form {
+      display: grid;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+    }
+    input, textarea, select {
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+    button.submit {
+      background: #007bff;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.submit:hover {
+      background: #0056b3;
+    }
+    canvas {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>TaskQuest - Gestión de Tareas</h1>
+  <div class="container">
+    <button onclick="toggleForm()">Agregar Nueva Tarea</button>
+    <div id="form-container">
+      <form id="task-form">
+        <input type="text" id="title" placeholder="Título de la tarea" required />
+        <textarea id="description" placeholder="Descripción de la tarea"></textarea>
+        <input type="number" id="duration" placeholder="Duración estimada (min)" required />
+        <input type="text" id="assignee" placeholder="Asignado a (persona o grupo)" required />
+        <select id="status">
+          <option value="pendiente">Pendiente</option>
+          <option value="en progreso">En progreso</option>
+          <option value="completada">Completada</option>
+          <option value="ausente">Ausente</option>
+        </select>
+        <textarea id="notes" placeholder="Notas adicionales"></textarea>
+        <button type="submit" class="submit">Guardar tarea</button>
+      </form>
+    </div>
+
+    <div class="task-list" id="task-list"></div>
+
+    <canvas id="taskChart" width="400" height="200"></canvas>
+  </div>
+
+  <script>
+    const tasks = [];
+
+    const form = document.getElementById("task-form");
+    const taskList = document.getElementById("task-list");
+    const chartCanvas = document.getElementById("taskChart");
+    let chart;
+
+    function toggleForm() {
+      const formContainer = document.getElementById("form-container");
+      formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const newTask = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        duration: document.getElementById("duration").value,
+        assignee: document.getElementById("assignee").value,
+        status: document.getElementById("status").value,
+        notes: document.getElementById("notes").value,
+      };
+      tasks.push(newTask);
+      form.reset();
+      toggleForm();
+      renderTasks();
+      updateChart();
+    });
+
+    function renderTasks() {
+      taskList.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.innerHTML = `
+          <div class="task-title">${task.title}</div>
+          <small>${task.description}</small>
+          <small>Duración: ${task.duration} min</small>
+          <small>Asignado a: ${task.assignee}</small>
+          <small>Estado: ${task.status}</small>
+          <small>Notas: ${task.notes}</small>
+          <div class="task-buttons">
+            <button onclick="completeTask(${index})">Completar</button>
+            <button onclick="editTask(${index})">Editar</button>
+            <button onclick="deleteTask(${index})" class="delete">Eliminar</button>
+          </div>
+        `;
+        taskList.appendChild(div);
+      });
+    }
+
+    function completeTask(index) {
+      tasks[index].status = "completada";
+      renderTasks();
+      updateChart();
+      alert("¡Tarea completada! 🎉");
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+      updateChart();
+    }
+
+    function editTask(index) {
+      const task = tasks[index];
+      document.getElementById("title").value = task.title;
+      document.getElementById("description").value = task.description;
+      document.getElementById("duration").value = task.duration;
+      document.getElementById("assignee").value = task.assignee;
+      document.getElementById("status").value = task.status;
+      document.getElementById("notes").value = task.notes;
+      deleteTask(index);
+      toggleForm();
+    }
+
+    function updateChart() {
+      const statusCount = {
+        pendiente: 0,
+        "en progreso": 0,
+        completada: 0,
+        ausente: 0,
+      };
+      tasks.forEach((t) => statusCount[t.status]++);
+
+      if (chart) chart.destroy();
+      chart = new Chart(chartCanvas, {
+        type: "bar",
+        data: {
+          labels: ["Pendiente", "En Progreso", "Completada", "Ausente"],
+          datasets: [
+            {
+              label: "Tareas",
+              data: [
+                statusCount.pendiente,
+                statusCount["en progreso"],
+                statusCount.completada,
+                statusCount.ausente,
+              ],
+              backgroundColor: ["#ffc107", "#17a2b8", "#28a745", "#dc3545"],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: true },
+          },
+        },
+      });
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
