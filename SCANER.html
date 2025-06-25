@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escáner de Códigos de Barras</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f3f3f3;
+    }
+
+    .scanner-area {
+      position: sticky;
+      top: 0;
+      background-color: #222;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      border-bottom: 5px solid red;
+    }
+
+    .scanner-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: red;
+      animation: scan 1.5s infinite;
+    }
+
+    @keyframes scan {
+      0% { top: 0; }
+      50% { top: 100%; }
+      100% { top: 0; }
+    }
+
+    .products {
+      padding: 20px;
+    }
+
+    .product {
+      background-color: white;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      width: fit-content;
+    }
+
+    .barcode-img {
+      height: 100px;
+      margin-right: 20px;
+    }
+
+    .info-box {
+      background-color: #fff;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      position: fixed;
+      top: 160px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: none;
+      width: 80%;
+      max-width: 600px;
+    }
+
+    .precio-destacado {
+      font-size: 36px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scanner-area" id="scanner">
+    <div class="scanner-line"></div>
+  </div>
+
+  <div class="info-box" id="infoBox"></div>
+
+  <div class="products" id="productList">
+    <!-- Cereal (corregido) -->
+    <div class="product" draggable="true" data-info='{"nombre":"Cereal","supermercado":"EXITO","marca":"coffe","id":"001","fecha":"2025-05-13","stock":15,"neto":1500,"iva":285,"bruto":1785,"precio":1785}'>
+      <img src="https://barcode.tec-it.com/barcode.ashx?data=001" alt="001" class="barcode-img">
+      <span>Cereal</span>
+    </div>
+
+    <div class="product" draggable="true" data-info='{"nombre":"Jugo de Naranja","supermercado":"SuperX","marca":"Del Valle","id":"002","fecha":"2025-05-13","stock":15,"neto":1500,"iva":285,"bruto":1785,"precio":1785}'>
+      <img src="https://barcode.tec-it.com/barcode.ashx?data=002" alt="002" class="barcode-img">
+      <span>Jugo de Naranja</span>
+    </div>
+
+    <div class="product" draggable="true" data-info='{"nombre":"Detergente Líquido","supermercado":"SuperX","marca":"Ariel","id":"003","fecha":"2025-05-15","stock":40,"neto":3500,"iva":665,"bruto":4165,"precio":4165}'>
+      <img src="https://barcode.tec-it.com/barcode.ashx?data=003" alt="003" class="barcode-img">
+      <span>Detergente Líquido</span>
+    </div>
+
+    <div class="product" draggable="true" data-info='{"nombre":"Galletas de Chocolate","supermercado":"SuperX","marca":"Costa","id":"004","fecha":"2025-05-20","stock":25,"neto":1800,"iva":342,"bruto":2142,"precio":2142}'>
+      <img src="https://barcode.tec-it.com/barcode.ashx?data=004" alt="004" class="barcode-img">
+      <span>Galletas de Chocolate</span>
+    </div>
+
+    <div class="product" draggable="true" data-info='{"nombre":"Aceite de Maravilla","supermercado":"SuperX","marca":"Ideal","id":"005","fecha":"2025-05-21","stock":50,"neto":2900,"iva":551,"bruto":3451,"precio":3451}'>
+      <img src="https://barcode.tec-it.com/barcode.ashx?data=005" alt="005" class="barcode-img">
+      <span>Aceite de Maravilla</span>
+    </div>
+  </div>
+
+  <script>
+    const scanner = document.getElementById('scanner');
+    const infoBox = document.getElementById('infoBox');
+    let timeoutId = null;
+
+    document.querySelectorAll('.product').forEach(product => {
+      product.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', product.getAttribute('data-info'));
+      });
+    });
+
+    scanner.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    scanner.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const data = e.dataTransfer.getData('text/plain');
+      if (data) {
+        const productData = JSON.parse(data);
+        showProductInfo(productData);
+      }
+    });
+
+    function showProductInfo(data) {
+      infoBox.innerHTML = `
+        <h2>${data.nombre}</h2>
+        <p><strong>Marca:</strong> ${data.marca}</p>
+        <p><strong>Supermercado:</strong> ${data.supermercado}</p>
+        <p><strong>ID del producto:</strong> ${data.id}</p>
+        <p><strong>Fecha de entrega:</strong> ${data.fecha}</p>
+        <p><strong>Stock disponible:</strong> ${data.stock}</p>
+        <p><strong>Valor neto:</strong> $${data.neto}</p>
+        <p><strong>IVA:</strong> $${data.iva}</p>
+        <p class="precio-destacado">Precio final: $${data.precio}</p>
+      `;
+      infoBox.style.display = 'block';
+
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        infoBox.style.display = 'none';
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>
