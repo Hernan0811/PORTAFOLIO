@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portafolio de Hernán Carrillo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: #fff;
+      padding: 40px 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    header h1 {
+      font-size: 3em;
+      font-weight: 700;
+    }
+    header p {
+      font-size: 1.2em;
+      color: #ddd;
+    }
+    .about {
+      max-width: 800px;
+      margin: 0 auto 50px auto;
+      text-align: center;
+      font-size: 1em;
+      color: #ccc;
+      line-height: 1.6em;
+    }
+    .portfolio {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background-color: #2d2a3a;
+      border-radius: 15px;
+      padding: 25px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    }
+    .card h3 {
+      color: #ffd369;
+      margin-bottom: 10px;
+    }
+    .card p {
+      color: #ccc;
+    }
+    .card a {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #ffd369;
+      color: #1f1c2c;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    .card a:hover {
+      background: #ffcd52;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hernán Carrillo</h1>
+    <p>Apasionado por la programación • Creativo • En búsqueda de nuevas oportunidades</p>
+  </header>
+
+  <section class="about">
+    <p>
+      Me apasiona crear soluciones útiles con código. Manejo Python, JavaScript, PHP, C#, HTML, CSS y bases de datos como SQL Server y MySQL. Siempre estoy aprendiendo y buscando nuevas formas de mejorar como desarrollador. Aquí podrás conocer algunos de mis proyectos destacados.
+    </p>
+  </section>
+
+  <section class="portfolio">
+    <div class="card">
+      <h3>Página Publicitaria Interactiva</h3>
+      <p>Animaciones y cambios visuales según la marca: Coca-Cola, Pepsi y Fanta. Diseño creativo y dinámico.</p>
+      <a href="https://hernan0811.github.io/pagina-publicitaria/" target="_blank">Ver proyecto</a>
+    </div>
+
+    <div class="card">
+      <h3>Calendario Personal</h3>
+      <p>Calendario interactivo con notas, recordatorios visuales, modo oscuro, buscador y estadísticas.</p>
+      <a href="https://hernan0811.github.io/calendario-personal/" target="_blank">Ver proyecto</a>
+    </div>
+
+    <div class="card">
+      <h3>TaskQuest – Gestor de Tareas</h3>
+      <p>App tipo videojuego para organizar tareas con puntos, niveles, grupos y estados dinámicos.</p>
+      <a href="https://hernan0811.github.io/taskquest-tareas/" target="_blank">Ver proyecto</a>
+    </div>
+
+    <div class="card">
+      <h3>Escáner en Línea</h3>
+      <p>Proyecto que simula el escaneo de códigos e interacción visual personalizada.</p>
+      <a href="https://hernan0811.github.io/scanner-python/" target="_blank">Ver proyecto</a>
+    </div>
+
+    <div class="card">
+      <h3>Juego de Laberinto</h3>
+      <p>Juego web en HTML y JavaScript con lógica de caminos y escape visualmente atractivo.</p>
+      <a href="https://hernan0811.github.io/juego-laberinto/" target="_blank">Ver proyecto</a>
+    </div>
+
+    <div class="card">
+      <h3>Simulación del Sistema Solar</h3>
+      <p>Animación y rotación de planetas con imágenes, usando HTML, CSS y recursos gráficos.</p>
+      <a href="https://hernan0811.github.io/sistema-solar/" target="_blank">Ver proyecto</a>
+    </div>
+  </section>
+</body>
+</html>
